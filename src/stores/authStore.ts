@@ -1,7 +1,9 @@
+import api from "@/api";
 import { create } from "zustand";
 
 interface AuthState {
   isAuthenticated: boolean;
+  token: string;
   isAdmin: boolean;
   login: (username: string, password: string) => boolean;
   logout: () => void;
@@ -10,12 +12,18 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => ({
   isAuthenticated: false,
   isAdmin: false,
+  token: "",
   login: (username, password) => {
-    if (username === "admin" && password === "password") {
-      set({ isAuthenticated: true, isAdmin: true });
+    api.post("/users/login", { username, password }).then((response) => {
+      set({
+        isAuthenticated: true,
+        isAdmin: true,
+        token: response.data.token,
+      });
       return true;
-    }
+    });
+
     return false;
   },
-  logout: () => set({ isAuthenticated: false, isAdmin: false }),
+  logout: () => set({ isAuthenticated: false, isAdmin: false, token: "" }),
 }));

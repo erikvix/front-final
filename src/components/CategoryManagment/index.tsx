@@ -3,17 +3,27 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useProductStore } from "@/stores/productStore";
+import { Category } from "@/types/type";
 
 function CategoryManagement() {
-  const { categories, addCategory, editCategory, deleteCategory } =
-    useProductStore();
-  const [newCategory, setNewCategory] = useState("");
+  const {
+    categories,
+    fetchCategories,
+    addCategory,
+    editCategory,
+    deleteCategory,
+  } = useProductStore();
+  const [newCategory, setNewCategory] = useState<Category>({
+    id: 0,
+    name: "",
+  });
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleAddCategory = () => {
-    if (newCategory.trim()) {
-      addCategory({ name: newCategory.trim() });
-      setNewCategory("");
+  const handleAddCategory = async () => {
+    if (newCategory.name.trim()) {
+      await addCategory(newCategory);
+      fetchCategories();
+      setNewCategory({ id: 0, name: "" });
     }
   };
 
@@ -31,14 +41,16 @@ function CategoryManagement() {
         <div className="mb-4 flex space-x-2">
           <Input
             type="text"
-            value={newCategory}
-            onChange={(e) => setNewCategory(e.target.value)}
+            value={newCategory.name}
+            onChange={(e) =>
+              setNewCategory({ ...newCategory, name: e.target.value })
+            }
             placeholder="New category name"
           />
           <Button onClick={handleAddCategory}>Add Category</Button>
         </div>
         <ul className="space-y-2">
-          {categories.map((category) => (
+          {categories.map((category: Category) => (
             <li
               key={category.id}
               className="flex items-center justify-between bg-secondary p-4 rounded-lg"

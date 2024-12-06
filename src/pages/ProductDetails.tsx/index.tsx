@@ -3,7 +3,6 @@ import { useProductStore } from "../../stores/productStore";
 import {
   Card,
   CardContent,
-  CardHeader,
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
@@ -20,20 +19,18 @@ function ProductDetails() {
 
   return (
     <Card className="max-w-3xl mx-auto">
-      <CardHeader>
-        <CardTitle className="text-3xl">{product.name}</CardTitle>
-        <CardDescription>{product.description}</CardDescription>
-      </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
           <img
-            src={product.image}
+            src={product.imageUrl}
             alt={product.name}
             className="w-full h-auto object-cover rounded-lg"
           />
           <div className="space-y-4">
+            <CardTitle className="text-3xl">{product.name}</CardTitle>
+            <CardDescription>{product.description}</CardDescription>
             <p className="text-2xl font-semibold">
-              ${product.price.toFixed(2)}
+              R${product.price.toFixed(2)}
             </p>
             <Button className="w-full">Add to Cart</Button>
           </div>

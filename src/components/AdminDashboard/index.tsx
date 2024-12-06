@@ -8,7 +8,7 @@ import ProductManagement from "../ProductManagement/index.tsx";
 function AdminDashboard() {
   return (
     <SidebarProvider>
-      <div className="flex h-screen">
+      <div className="max-w-screen-xl w-full mx-auto p-4 flex h-screen">
         <AdminSidebar />
         <SidebarInset className="flex-grow p-6 overflow-auto">
           <Routes>

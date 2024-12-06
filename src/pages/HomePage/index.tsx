@@ -9,9 +9,16 @@ import {
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Category, Product } from "@/types/type";
+import { useEffect } from "react";
 
 function HomePage() {
-  const { categories, products } = useProductStore();
+  const { categories, products, fetchCategories, fetchProducts } =
+    useProductStore();
+
+  useEffect(() => {
+    fetchCategories();
+    fetchProducts();
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -30,7 +37,7 @@ function HomePage() {
                   </CardHeader>
                   <CardContent>
                     <img
-                      src={product.image}
+                      src={product.imageUrl}
                       alt={product.name}
                       className="w-full h-48 object-cover rounded-md"
                     />

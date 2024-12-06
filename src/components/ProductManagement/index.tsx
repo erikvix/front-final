@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -11,36 +11,73 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useProductStore } from "@/stores/productStore";
 import { Product } from "@/types/type";
+import FileUpload from "../ui/fileupload";
 
 function ProductManagement() {
-  const { products, categories, addProduct, editProduct, deleteProduct } =
-    useProductStore();
-  const [newProduct, setNewProduct] = useState<Omit<Product, "id">>({
+  const {
+    products,
+    categories,
+    fetchProducts,
+    fetchCategories,
+    addProduct,
+    editProduct,
+    deleteProduct,
+  } = useProductStore();
+
+  const [newProduct, setNewProduct] = useState<Product & { file?: File }>({
+    id: 0,
     name: "",
     description: "",
     price: 0,
     categoryId: 0,
-    image: "",
+    imageUrl: "",
+    file: undefined,
   });
+
   const [editingId, setEditingId] = useState<number | null>(null);
 
-  const handleAddProduct = () => {
-    if (newProduct.name && newProduct.price && newProduct.categoryId) {
-      addProduct(newProduct);
+  const handleAddProduct = async () => {
+    if (
+      newProduct.name &&
+      newProduct.description &&
+      newProduct.price &&
+      newProduct.categoryId &&
+      newProduct.file
+    ) {
+      const formData = new FormData();
+      formData.append("name", newProduct.name);
+      formData.append("description", newProduct.description);
+      formData.append("price", newProduct.price.toString());
+      formData.append("categoryId", newProduct.categoryId.toString());
+      formData.append("file", newProduct.file);
+
+      await addProduct(newProduct, newProduct.file);
+      fetchProducts();
       setNewProduct({
+        id: 0,
         name: "",
         description: "",
         price: 0,
         categoryId: 0,
-        image: "",
+        imageUrl: "",
+        file: undefined,
       });
     }
   };
 
-  const handleEditProduct = (id: number, updatedProduct: Partial<Product>) => {
-    editProduct(id, updatedProduct);
+  const handleEditProduct = async (
+    id: number,
+    updatedProduct: Partial<Product>
+  ) => {
+    await editProduct(id, updatedProduct);
     setEditingId(null);
   };
+
+  useEffect(() => {
+    fetchProducts();
+    fetchCategories();
+    console.log(products);
+  }, [fetchProducts, fetchCategories]);
 
   return (
     <Card>
@@ -92,13 +129,13 @@ function ProductManagement() {
               ))}
             </SelectContent>
           </Select>
-          <Input
-            type="text"
-            value={newProduct.image}
-            onChange={(e) =>
-              setNewProduct({ ...newProduct, image: e.target.value })
+        </div>
+        <div className="flex flex-col gap-4 mb-4">
+          <FileUpload
+            onChange={(fileUrl, file) =>
+              setNewProduct({ ...newProduct, imageUrl: fileUrl, file })
             }
-            placeholder="Product image URL"
+            currentImage={newProduct.imageUrl}
           />
           <Button onClick={handleAddProduct}>Add Product</Button>
         </div>
@@ -125,7 +162,7 @@ function ProductManagement() {
                   />
                   <Input
                     type="number"
-                    defaultValue={product.price}
+                    defaultValue={product.price.toString()}
                     onChange={(e) =>
                       handleEditProduct(product.id, {
                         price: parseFloat(e.target.value),
@@ -158,23 +195,33 @@ function ProductManagement() {
                       ))}
                     </SelectContent>
                   </Select>
-                  <Input
-                    type="text"
-                    defaultValue={product.image}
-                    onChange={(e) =>
-                      handleEditProduct(product.id, { image: e.target.value })
+                  <FileUpload
+                    onChange={(fileUrl, file) =>
+                      handleEditProduct(product.id, { imageUrl: fileUrl })
                     }
+                    currentImage={product.imageUrl}
                   />
                   <Button onClick={() => setEditingId(null)}>Save</Button>
                 </div>
               ) : (
                 <div className="flex justify-between items-center">
-                  <div>
-                    <h3 className="font-semibold">{product.name}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      {product.description}
-                    </p>
-                    <p className="text-sm">${product.price.toFixed(2)}</p>
+                  <div className="flex gap-4 items-center">
+                    <div className="relative h-24 w-24 rounded-md overflow-hidden">
+                      {product.imageUrl && (
+                        <img
+                          src={product.imageUrl}
+                          alt={product.name}
+                          className="object-cover"
+                        />
+                      )}
+                    </div>
+                    <div>
+                      <h3 className="font-semibold">{product.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {product.description}
+                      </p>
+                      <p className="text-sm">${product.price.toFixed(2)}</p>
+                    </div>
                   </div>
                   <div>
                     <Button

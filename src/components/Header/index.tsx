@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/stores/authStore";
@@ -9,7 +8,7 @@ function Header() {
   const logout = useAuthStore((state) => state.logout);
 
   return (
-    <header className="bg-primary text-primary-foreground py-4">
+    <header className="border-b py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">
           E-commerce Store
