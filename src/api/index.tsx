@@ -1,7 +1,6 @@
 import { useAuthStore } from "@/stores/authStore";
 import axios, { AxiosInstance } from "axios";
 
-// Criação de uma instância do Axios
 const api: AxiosInstance = axios.create({
   baseURL: "http://localhost:8080",
   headers: {
@@ -10,7 +9,7 @@ const api: AxiosInstance = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const { token } = useAuthStore.getState(); // Obtenha o token dinamicamente
+  const { token } = useAuthStore.getState();
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -22,7 +22,7 @@ function HomePage() {
 
   return (
     <div className="space-y-10">
-      <h1 className="text-4xl font-bold">Welcome to Our E-commerce Store</h1>
+      <h1 className="text-4xl font-bold">Welcome to Hyuji Store</h1>
       {categories.map((category: Category) => (
         <div key={category.id}>
           <h2 className="text-2xl font-semibold mb-4">{category.name}</h2>

@@ -1,4 +1,4 @@
-import React from "react";
+
 import { Routes, Route, Navigate } from "react-router-dom";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AdminSidebar } from "../AdminSidebar.tsx";

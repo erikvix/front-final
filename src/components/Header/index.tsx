@@ -11,7 +11,7 @@ function Header() {
     <header className="border-b py-4">
       <div className="container mx-auto px-4 flex justify-between items-center">
         <Link to="/" className="text-2xl font-bold">
-          E-commerce Store
+          Hyuji Store
         </Link>
         <nav className="flex items-center space-x-4">
           <Button variant="ghost" asChild>
